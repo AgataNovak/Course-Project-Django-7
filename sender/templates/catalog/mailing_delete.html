@@ -1,0 +1,12 @@
+{% extends 'sender/index.html'%}
+{% block content %}
+<div class="container mt-5">
+        <h1 class="mb-4">Удалить сообщение</h1>
+        <p>Вы уверены, что хотите удалить "{{object.id}}"?</p>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger" > Удалить</button>
+            <a href="{% url 'sender:message_list' %}" class="btn btn-secondary">Отмена</a>
+        </form>
+    </div>
+{% endblock %}

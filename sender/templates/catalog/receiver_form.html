@@ -1,0 +1,11 @@
+{% extends 'catalog/index.html'%}
+{% block title %}{{ form.instance.id|yesno:"Редактирование получателя, Добавление получателя" }}{% endblock %}
+{% block content %}
+<h2>{{ form.instance.id|yesno:"Редактирование получателя, Добавление получателя" }}</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Сохранить</button>
+</form>
+<a href="{% url 'sender:receiver_list' %}">Назад к списку получателей</a>
+{% endblock %}>

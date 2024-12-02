@@ -1,0 +1,47 @@
+{% extends 'catalog/index.html'%}
+{% block title %}Получатель рассылки{% endblock %}
+{% block content %}
+<h2>Получатель рассылки</h2>
+<table>
+    <div class="container">
+      <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
+        <div class="col">
+          <div class="p-3 border bg-light">E-mail</div>
+        </div>
+        <div class="col">
+          <div class="p-3 border bg-light">Ф.И.О.</div>
+        </div>
+        <div class="col">
+          <div class="p-3 border bg-light">Комментарий</div>
+        </div>
+        <div class="col">
+          <div class="p-3 border bg-light">Редактировать</div>
+        </div>
+        <div class="col">
+          <div class="p-3 border bg-light">Удалить</div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
+        <div class="col">
+          <div class="p-3 border bg-light">{{receiver.email}}</div>
+        </div>
+        <div class="col">
+          <div class="p-3 border bg-light">{{receiver.full_name}}</div>
+        </div>
+        <div class="col">
+          <div class="p-3 border bg-light">{{receiver.comment}}</div>
+        </div>
+        {% if user == receiver.owner or user.is_staff or perms.user.delete_receiver %}
+        <div class="col">
+          <div class="p-3 border bg-light"><a href="{% url 'mail:recipient_update' recipient.id %}">Редактировать</a></div>
+        </div>
+        <div class="col">
+          <div class="p-3 border bg-light"><a href="{% url 'mail:recipient_delete' recipient.id %}">Удалить</a></div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+</table>
+{% endblock %}

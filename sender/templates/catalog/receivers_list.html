@@ -1,0 +1,28 @@
+{% extends "catalog/index.html" %}
+{% block title %}Получатели рассылки{% endblock %}
+{% block content %}
+<h2>Получатели рассылки</h2>
+<a href="{% url 'mail:recipient_form'%}">Добавить получателя</a>
+<table class="table">
+  <thead>
+    <tr>
+      <th>E-mail</th>
+      <th>Ф.И.О.</th>
+      <th>Комментарий</th>
+      <th>Подробнее</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for recipient in recipient_list %}
+      {% if user == recipient.owner or user.is_staff or perms.spam.can_view_all_recipients %}
+        <tr>
+          <td>{{ recipient.email }}</td>
+          <td>{{ recipient.full_name }}</td>
+          <td>{{ recipient.comment }}</td>
+          <td><a href="{% url 'mail:recipient_detail' recipient.id %}">Подробнее</a></td>
+        </tr>
+      {% endif %}
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

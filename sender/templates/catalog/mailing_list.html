@@ -1,0 +1,66 @@
+{% extends "sender/index.html" %}
+{% block title %} Рассылки {% endblock %}
+{% block content %}
+    <h1>Список рассылок</h1>
+    <a href="{% url 'sender:mailing_create' %}">Добавить рассылку</a>
+    <table>
+        {% for mailing in mailing_list %}
+            {% if user == mailing.owner or user.is_staff or perms.mail.can_view_all_mailings %}
+            <tr>
+                <td>
+                    <a href="{% url 'sender:mailing_detail' mailing.id %}">
+                         Рассылка №: {{ mailing.id }} Подробнее
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <th>Владелец рассылки</th>
+                <td>
+                    {{ mailing.owner }}
+                </td>
+            </tr>
+            <tr>
+                <th>Дата и Время первой отправки</th>
+                <td>{{ mailing.first_send_time }}</td>
+                {% if user == mailing.owner or user.is_staff %}
+                <td>
+                    <a href="{% url 'mail:mailing_start' mailing.id %}">Начать рассылку</a>
+                </td>
+                {% endif %}
+            </tr>
+            <tr>
+                <th>Дата и Время окончания отправки</th>
+                <td>{{ mailing.end_time }}</td>
+            </tr>
+            <tr>
+                <th>Статус</th>
+                <td>{{ mailing.status }}</td>
+            </tr>
+            <tr>
+                <th>Сообщение</th>
+                <td>{{ mailing.message|truncatewords:100 }}</td>
+            </tr>
+            <tr>
+                <th>Получатели</th>
+                <td>
+                    <ul>
+                    {% for receiver in mailing.receivers.all %}
+                        <li>{{ receiver.full_name }} ({{ receiver.email }})</li>
+                    {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <th>Статус рассылки</th>
+                <td>
+                    {% if mailing.is_blocked %}
+                        Заблокировано
+                    {% else %}
+                        Разблокировано
+                    {% endif %}
+                </td>
+            </tr>
+        {% endif %}
+        {% endfor %}
+    </table>
+{% endblock %}

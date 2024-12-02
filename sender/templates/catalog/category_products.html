@@ -1,0 +1,29 @@
+{% extends 'catalog/index.html'%}
+{% block title %}
+<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+    <h1 class="display-4">SPHYRNA</h1>
+    <p class="lead"> Картины в категории {{category.name}}</p>
+</div>
+{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row text-center">
+        {% for product in products %}
+        <div class="col-3">
+            <div class="card mb-4 box-shadow">
+                <div class="card-header">
+                    <h4 class="my-0 font-weight-normal">{{ product.name }}</h4>
+                </div>
+                <div class="card-body">
+                    <h1 class="card-title pricing-card-title">$ {{ product.price }}</h1>
+                    <ul class="list-unstyled mt-3 mb-4 text-start m-3">
+                        <li>- {{ product.description|truncatechars:100 }}</li>
+                    </ul>
+                    <a type="button"  class="btn btn-lg btn-block btn-outline-primary" href="{% url 'catalog:product_detail' product.id %}">Посмотреть</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+ {% endblock %}
