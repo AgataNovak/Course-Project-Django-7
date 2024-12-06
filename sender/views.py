@@ -20,6 +20,15 @@ class ReceiverListView(ListView):
     template_name = "sender/receiver_list.html"
     context_object_name = "receivers"
 
+    def get_queryset(self):
+        if self.request.user.is_superuser or self.request.user.has_permission(
+                "can_view_all_receivers"
+        ):
+            return get_receivers_from_cache()
+        else:
+            user = self.request.user
+            return MailDeliver.objects.filter(owner=user)
+
 
 class ReceiverCreateView(CreateView):
     model = Receiver
@@ -44,7 +53,7 @@ class ReceiverDetailView(DetailView):
     context_object_name = 'receivers'
 
 
-class ReceiverUpdateView(UpdateView):
+class ReceiverUpdateView(LoginRequiredMixin, UpdateView):
     model = Receiver
     form_class = ReceiverForm
     template_name = 'sender/receiver_form.html'
@@ -57,11 +66,16 @@ class ReceiverUpdateView(UpdateView):
         raise PermissionDenied
 
 
-class ReceiverDeleteView(DeleteView):
+class ReceiverDeleteView(LoginRequiredMixin, DeleteView):
     model = Receiver
     template_name = 'sender/receive_delete.html'
     success_url = reverse_lazy('sender:receiver_list')
 
+    def get_form_class(self):
+        user = self.request.user
+        if user == self.object.owner:
+            return ReceiverForm
+        raise PermissionDenied
 
 class MessageListView(ListView):
     model = Message
@@ -82,7 +96,7 @@ class MessageCreateView(CreateView):
     success_url = reverse_lazy('sender:message_list')
 
 
-class MessageUpdateView(UpdateView):
+class MessageUpdateView(LoginRequiredMixin, UpdateView):
     model = Message
     form_class = MessageForm
     template_name = 'sender/message_form.html'
@@ -95,12 +109,19 @@ class MessageUpdateView(UpdateView):
         raise PermissionDenied
 
 
-class MessageDeleteView(DeleteView):
+class MessageDeleteView(LoginRequiredMixin, DeleteView):
     model = Message
     template_name = 'sender/message_delete.html'
     success_url = reverse_lazy('sender:message_list')
 
+    def get_form_class(self):
+        user = self.request.user
+        if user == self.object.owner:
+            return ReceiverForm
+        raise PermissionDenied
 
+
+@method_decorator(cache_page(60 * 15), name='dispatch')
 class HomePageView(View):
     template_name = "sender/home.html"
 
@@ -149,7 +170,7 @@ class MailingCreateView(View):
         return render(request, "sender/mailing_form.html", {"form": form})
 
 
-class MailingUpdateView(UpdateView):
+class MailingUpdateView(LoginRequiredMixin, UpdateView):
     model = MailDeliver
     form_class = MailDeliverForm
     template_name = "sender/mailing_form.html"
@@ -176,6 +197,12 @@ class MailingDeleteView(LoginRequiredMixin, DeleteView):
             and self.request.user.has_perm("sender.delete_mailing")
             or self.request.mailing.owner
         )
+
+    def get_object(self, queryset=None):
+        try:
+            return super().get_object(queryset)
+        except MailDeliver.DoesNotExist:
+            raise PermissionDenied("У Вас нет прав для удаления этого сообщения.")
 
     def handle_no_permission(self):
         return redirect("sender:mailing_list")
