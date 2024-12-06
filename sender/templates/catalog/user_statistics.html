@@ -1,0 +1,11 @@
+{% extends 'catalog/index.html'%}
+{% block title %}Статистика рассылок{% endblock %}
+{% block content %}
+<h2>Статистика рассылок для {{ user_stats.user.username }}</h2>
+<ul>
+    <li>Всего рассылок: {{ user_stats.total_mailings }}</li>
+    <li>Успешные рассылки: {{ user_stats.successful_mailings }}</li>
+    <li>Неуспешные рассылки: {{ user_stats.failed_mailings }}</li>
+</ul>
+<a href="{% url 'mail:home' %}">На главную страницу</a>
+{% endblock %}

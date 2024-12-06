@@ -1,0 +1,9 @@
+<div class="container">
+    <header>
+    {% if user.is_authenticated %}
+        <p>Добро пожаловать, {{user.username}} !</p>
+    {% else %}
+        <p>Добро пожаловать на сайт!</p>
+    {% endif %}
+    </header>
+</div>

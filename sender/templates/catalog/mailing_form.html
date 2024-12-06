@@ -1,0 +1,11 @@
+{% extends "sender/index.html" %}
+{% block title %}{{ "Добавление рассылок" }}{% endblock %}
+{% block content %}
+<h2>{{ "Создание рассылки" }}</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Сохранить</button>
+</form>
+<a href="{% url 'sender:mailing_list' %}">К списку рассылок</a>
+{% endblock %}

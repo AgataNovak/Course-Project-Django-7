@@ -1,0 +1,48 @@
+{% extends "sender/index.html" %}
+{% block title %} Подробности рассылки {% endblock %}
+{% block content %}
+    <h1>Рассылка №{{mailing.id}}</h1>
+    <table>
+    {% if user == mailing.owner or user.is_staff or perms.mail.can_view_all_mailings%}
+        <tr>
+            <th>Дата и Время Первой Отправки</th>
+            <td>{{ mailing.first_send_time }}</td>
+                <td>
+                    {% if user == mailing.owner or user.is_staff %}
+                        <a href="{% url 'sender:mailing_update' mailing.id %}">Редактировать</a>
+                        <a href="{% url 'sender:mailing_delete' mailing.id %}">Удалить</a>
+                    {% endif %}
+                    {% if perms.mail.can_disable_mailings or user.is_staff %}
+                    {% if mailing.is_blocked %}
+                        <td><a href="{% url 'sender:mailing_block' mailing.id %}">Разблокировать рассылку</a></td>
+                    {% else %}
+                        <td><a href="{% url 'sender:mailing_block' mailing.id %}">Заблокировать рассылку</a></td>
+                    {% endif %}
+                    {% endif %}
+                </td>
+        </tr>
+        <tr>
+            <th>Дата и Время Окончания Отправки</th>
+            <td>{{  mailing.end_time }}</td>
+        </tr>
+        <tr>
+            <th>Статус</th>
+            <td>{{ mailing.status }}</td>
+        </tr>
+        <tr>
+            <th>Сообщение</th>
+            <td>{{ mailing.message|truncatewords:100 }}</td>
+        </tr>
+        <tr>
+            <th>Получатели</th>
+            <td>
+                <ul>
+                {% for receiver in mailing.receivers.all %}
+                    <li>{{ receiver.full_name }} ({{ receiver.email }})</li>
+                {% endfor %}
+                </ul>
+            </td>
+        </tr>
+    {% endif %}
+    </table>
+{% endblock %}

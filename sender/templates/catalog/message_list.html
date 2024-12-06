@@ -1,0 +1,24 @@
+{% extends "catalog/index.html" %}
+{% block title %}Сообщения{% endblock %}
+{% block content %}
+<h2>Сообщения</h2>
+<a href="{% url 'sender:message_create' %}">Добавить сообщение</a>
+<table>
+    <tr>
+        <th>Тема сообщения</th>
+        <th>Содержание</th>
+        <th>Подробности</th>
+    </tr>
+    {% for message in message_list %}
+        {% if user == message.owner or user.is_staff or perms.mail.can_view_all_messages %}
+            <tr>
+                <td>{{ message.subject }}</td>
+                <td>{{ message.body|truncatewords:100 }}</td>
+                <td><a class="btn btn-outline-primary" href="{% url 'sender:message_detail' message.id %}">
+                    Подробнее
+                </a></td>
+            </tr>
+        {% endif %}
+    {% endfor %}
+</table>
+{% endblock %}>
